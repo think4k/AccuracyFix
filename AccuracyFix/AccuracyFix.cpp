@@ -116,18 +116,19 @@ float CAccuracyFix::GetUserAiming(edict_t* pEdict, int* cpId, int* cpBody, float
 
 			Vector v_dest = v_src + v_forward * distance;
 
-			g_engfuncs.pfnTraceLine(v_src, v_dest, 0, pEdict, &trEnd);
+			if (g_engfuncs.pfnTraceLine(v_src, v_dest, 0, pEdict, &trEnd) != 0)
+           		{
+				*cpId = FNullEnt(trEnd.pHit) ? 0 : ENTINDEX(trEnd.pHit);
 
-			*cpId = FNullEnt(trEnd.pHit) ? 0 : ENTINDEX(trEnd.pHit);
+				*cpBody = trEnd.iHitgroup;
 
-			*cpBody = trEnd.iHitgroup;
+				if (trEnd.flFraction < 1.0f)
+				{
+					Result = (trEnd.vecEndPos - v_src).Length();
+				}
 
-			if (trEnd.flFraction < 1.0f)
-			{
-				Result = (trEnd.vecEndPos - v_src).Length();
-			}
-
-			return Result;
+				return Result;
+			}	
 		}
 	}
 
