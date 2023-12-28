@@ -117,7 +117,7 @@ float CAccuracyFix::GetUserAiming(edict_t* pEdict, int* cpId, int* cpBody, float
 			Vector v_dest = v_src + v_forward * distance;
 
 			g_engfuncs.pfnTraceLine(v_src, v_dest, 0, pEdict, &trEnd);
-           		
+
 			*cpId = FNullEnt(trEnd.pHit) ? 0 : ENTINDEX(trEnd.pHit);
 
 			*cpBody = trEnd.iHitgroup;
