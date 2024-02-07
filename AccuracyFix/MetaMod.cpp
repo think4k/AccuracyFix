@@ -3,8 +3,8 @@
 plugin_info_t Plugin_info =
 {
 	META_INTERFACE_VERSION,
-	"Accuracy Fix",
-	"1.0.7",
+	"AimBetter",
+	"1.0.9",
 	__DATE__,
 	"SmileY",
 	"https://pugbr.net",
