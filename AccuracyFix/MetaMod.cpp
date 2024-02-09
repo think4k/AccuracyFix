@@ -3,7 +3,7 @@
 plugin_info_t Plugin_info =
 {
 	META_INTERFACE_VERSION,
-	"AimBetter",
+	"FFanNyMeEdnoor",
 	"1.0.9",
 	__DATE__,
 	"SmileY",
