@@ -6,9 +6,7 @@ class CAccuracyFix
 public:
 	void ServerActivate();
 
-	void CmdEnd(const edict_t* pEdict);
 	void TraceLine(const float* vStart, const float* vEnd, int fNoMonsters, edict_t* pentToSkip, TraceResult* ptr);
-    	void PostThink(CBasePlayer* Player);
 	float GetUserAiming(edict_t* edict, int* cpId, int* cpBody, float distance);
 	cvar_t* CvarRegister(const char* Name, const char* Value);
 
