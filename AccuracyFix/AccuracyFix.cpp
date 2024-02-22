@@ -36,11 +36,6 @@ void CAccuracyFix::ServerActivate()
 	g_engfuncs.pfnServerExecute();
 }
 
-bool UTIL_IsValidPlayerIndex(int index)
-{
-	return (index > 0 && index <= gpGlobals->maxClients);
-}
-
 void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMonsters, edict_t* pentToSkip, TraceResult* ptr)
 {
 	auto EntityIndex = ENTINDEX(pentToSkip);
