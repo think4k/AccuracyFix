@@ -1,7 +1,5 @@
 #pragma once
 
-bool UTIL_IsValidPlayerIndex(int index);
-
 class CAccuracyFix
 {
 public:
