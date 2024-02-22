@@ -23,6 +23,7 @@
 #include <string>
 #include <array>
 #include <map>
+#include <cstdint>
 #include <vector>
 
 // System Includes
