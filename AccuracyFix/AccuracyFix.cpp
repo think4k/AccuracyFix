@@ -39,8 +39,8 @@ void CAccuracyFix::ServerActivate()
 void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMonsters, edict_t* pentToSkip, TraceResult* ptr)
 {
 	auto EntityIndex = ENTINDEX(pentToSkip);
-	
-	if (entityIndex > 0 && entityIndex <= gpGlobals->maxClients)	
+
+	if (EntityIndex > 0 && EntityIndex <= gpGlobals->maxClients)
 	{
 		auto Player = UTIL_PlayerByIndexSafe(EntityIndex);
 
@@ -65,7 +65,7 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 							
 							if (this->GetUserAiming(pentToSkip, &TargetIndex, &HitBoxPlace, aimDistance) > 0.0f)
 							{
-								if (TargetIndex > 0 && TargetIndex <= gpGlobals->maxClients)	
+								if (TargetIndex > 0 && TargetIndex <= gpGlobals->maxClients)
 								{
 									auto fwdVelocity = this->m_af_accuracy[Player->m_pActiveItem->m_iId]->value;
 									
@@ -103,8 +103,8 @@ float CAccuracyFix::GetUserAiming(edict_t* pEdict, int* cpId, int* cpBody, float
 	if (!FNullEnt(pEdict))
 	{
 		auto Entityindex = ENTINDEX(pEdict);
-		
-		if (Entityindex > 0 && Entityindex <= gpGlobals->maxClients)		
+
+		if (Entityindex > 0 && Entityindex <= gpGlobals->maxClients)
 		{
 			Vector v_forward;
 
