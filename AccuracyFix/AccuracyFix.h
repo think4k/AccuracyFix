@@ -2,7 +2,6 @@
 
 class CAccuracyFix
 {
-
 	public:
 		void ServerActivate();
 
