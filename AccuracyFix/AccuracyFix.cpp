@@ -52,7 +52,7 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 				{
 					if (Player->m_pActiveItem)
 					{
-						if (!((BIT(WEAPON_NONE) | BIT(WEAPON_HEGRENADE) | BIT(WEAPON_C4) | BIT(WEAPON_SMOKEGRENADE) | BIT(WEAPON_FLASHBANG) | BIT(WEAPON_KNIFE)) & BIT(Player->m_pActiveItem->m_iId)))
+						if ((Player->m_pActiveItem->iItemSlot() == PRIMARY_WEAPON_SLOT) || (Player->m_pActiveItem->iItemSlot() == PISTOL_SLOT))
 						{
 							auto aimDistance = this->m_af_distance[Player->m_pActiveItem->m_iId]->value;
 
@@ -73,19 +73,11 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 									{
 										fwdVelocity = this->m_af_accuracy_all->value;
 									}
+									g_engfuncs.pfnMakeVectors(pentToSkip->v.v_angle);
+
+									auto vEndRes = (Vector)vStart + gpGlobals->v_forward * fwdVelocity;
 									
-									if (fwdVelocity > 0.0f)
-									{
-										g_engfuncs.pfnMakeVectors(pentToSkip->v.v_angle);
-
-										Vector Result = Vector(0.0f, 0.0f, 0.0f);
-
-										Result[0] = (vStart[0] + (gpGlobals->v_forward[0] * fwdVelocity));
-										Result[1] = (vStart[1] + (gpGlobals->v_forward[1] * fwdVelocity));
-										Result[2] = (vStart[2] + (gpGlobals->v_forward[2] * fwdVelocity));
-
-										g_engfuncs.pfnTraceLine(vStart, Result, fNoMonsters, pentToSkip, ptr);
-									}
+									g_engfuncs.pfnTraceLine(vStart, vEndRes, fNoMonsters, pentToSkip, ptr);	
 								}
 							}
 						}
