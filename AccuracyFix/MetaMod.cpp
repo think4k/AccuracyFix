@@ -4,10 +4,10 @@ plugin_info_t Plugin_info =
 {
 	META_INTERFACE_VERSION,
 	"AccuracyFix",
-	"1.0.9",
+	"2.0.0",
 	__DATE__,
-	"SmileY",
-	"https://pugbr.net",
+	"think4k",
+	"https://dzair-gaming.com",
 	"AF",
 	PT_ANYTIME,
 	PT_ANYTIME,
