@@ -18,7 +18,7 @@ void CAccuracyFix::ServerActivate()
 			{
 				if (SlotInfo->weaponName)
 				{
-					char cvarName[32] = { 0 };
+					char cvarName[64] = { 0 };
 
 					Q_snprintf(cvarName, sizeof(cvarName), "af_accuracy_%s", SlotInfo->weaponName);
 
@@ -26,7 +26,7 @@ void CAccuracyFix::ServerActivate()
 
 					Q_snprintf(cvarName, sizeof(cvarName), "af_distance_%s", SlotInfo->weaponName);
 
-					this->m_af_distance[WeaponID] = this->CvarRegister(cvarName, "2048.0");
+					this->m_af_distance[WeaponID] = this->CvarRegister(cvarName, "4096.0");
 				}
 			}
 		}
