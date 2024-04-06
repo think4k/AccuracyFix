@@ -65,7 +65,7 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 
 								if (DistanceLimit > 0.0f)
 								{
-									auto trResult = this->GetUserAiming(pentToSkip, DistanceLimit);
+									auto trResult = gAccuracyFix.GetUserAiming(pentToSkip, DistanceLimit);
 
 									if (!FNullEnt(trResult.pHit))
 									{
