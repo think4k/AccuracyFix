@@ -119,7 +119,7 @@ float CAccuracyFix::GetUserAiming(edict_t* pEdict, int* cpId, int* cpBody, float
 
     	if (trEnd.flFraction < 1.0f)
     	{
-       	 return (trEnd.vecEndPos - v_src).Length();
+		return (trEnd.vecEndPos - v_src).Length();
    	}
 
     	return 0.0f;
