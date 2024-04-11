@@ -6,7 +6,7 @@ class CAccuracyFix
 		void ServerActivate();
 
 		void TraceLine(const float* vStart, const float* vEnd, int fNoMonsters, edict_t* pentToSkip, TraceResult* ptr);
-		float GetUserAiming(edict_t* edict, int* cpId, int* cpBody, float distance);
+		TraceResult GetUserAiming(edict_t* pEntity, float DistanceLimit);
 		cvar_t* CvarRegister(const char* Name, const char* Value);
 
 	private:
