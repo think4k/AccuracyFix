@@ -61,82 +61,100 @@ void CAccuracyFix::ServerActivate()
 
 void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMonsters, edict_t* pentToSkip, TraceResult* ptr)
 {
-    	if (fNoMonsters != dont_ignore_monsters || FNullEnt(pentToSkip))
-        	return;
+	auto EntityIndex = ENTINDEX(pentToSkip);
 
-    	auto EntityIndex = ENTINDEX(pentToSkip);
+	if (EntityIndex > 0 && EntityIndex <= gpGlobals->maxClients)
+	{
+		auto Player = UTIL_PlayerByIndexSafe(EntityIndex);
 
-    	if (EntityIndex <= 0 || EntityIndex > gpGlobals->maxClients)
-        	return;
+		if (Player)
+		{
+			if (Player->IsAlive())
+			{
+				if (fNoMonsters == dont_ignore_monsters)
+				{
+					if (Player->m_pActiveItem)
+					{
+						if (!((BIT(WEAPON_NONE) | BIT(WEAPON_HEGRENADE) | BIT(WEAPON_C4) | BIT(WEAPON_SMOKEGRENADE) | BIT(WEAPON_FLASHBANG) | BIT(WEAPON_KNIFE)) & BIT(Player->m_pActiveItem->m_iId)))
+						{
+							auto aimDistance = this->m_af_distance[Player->m_pActiveItem->m_iId]->value;
 
-    	auto Player = UTIL_PlayerByIndexSafe(EntityIndex);
+							if (this->m_af_distance_all->value > 0)
+							{
+								aimDistance = this->m_af_distance_all->value;
+							}
 
-    	if (!Player || !Player->IsAlive() || !Player->m_pActiveItem)
-       		return;
-	
-	if ((Player->m_pActiveItem->iItemSlot() != PRIMARY_WEAPON_SLOT) || (Player->m_pActiveItem->iItemSlot() != PISTOL_SLOT))	
-        	return;
+							int TargetIndex = 0, HitBoxPlace = 0;
 
-    	float aimDistance = this->m_af_distance[Player->m_pActiveItem->m_iId]->value;
-    	if (this->m_af_distance_all->value > 0)
-    	{
-        	aimDistance = this->m_af_distance_all->value;
-    	}
-
-    	if (aimDistance <= 0.0f || !(Player->pev->flags & FL_ONGROUND))
-        	return;
-
-    	int TargetIndex = 0, HitBoxPlace = 0;
-    	if (this->GetUserAiming(pentToSkip, &TargetIndex, &HitBoxPlace, aimDistance) > 0.0f)
-    	{
-        	if (TargetIndex > 0 && TargetIndex <= gpGlobals->maxClients)
-        	{
-            		float fwdVelocity = this->m_af_accuracy[Player->m_pActiveItem->m_iId]->value;
-            		if (this->m_af_accuracy_all->value > 0.0f)
-            		{
-                		fwdVelocity = this->m_af_accuracy_all->value;
-            		}
-
-            		if (fwdVelocity > 0.0f)
-            		{
-                		g_engfuncs.pfnMakeVectors(pentToSkip->v.v_angle);
-                		Vector Result = (Vector)vStart + gpGlobals->v_forward * fwdVelocity;
-                		g_engfuncs.pfnTraceLine(vStart, Result, fNoMonsters, pentToSkip, ptr);
-            		}
-        	}
-    	}
+							
+							if (this->GetUserAiming(pentToSkip, &TargetIndex, &HitBoxPlace, aimDistance) > 0.0f)
+							{
+								if (Player->pev->flags & FL_ONGROUND)
+								{
+									if (TargetIndex > 0 && TargetIndex <= gpGlobals->maxClients)
+									{
+										auto fwdVelocity = this->m_af_accuracy[Player->m_pActiveItem->m_iId]->value;
+									
+										if (this->m_af_accuracy_all->value > 0.0f)
+										{
+											fwdVelocity = this->m_af_accuracy_all->value;
+										}
+									
+										if (fwdVelocity > 0.0f)
+										{
+											g_engfuncs.pfnMakeVectors(pentToSkip->v.v_angle);
+                									Vector Result = (Vector)vStart + gpGlobals->v_forward * fwdVelocity;
+                									g_engfuncs.pfnTraceLine(vStart, Result, fNoMonsters, pentToSkip, ptr);
+										}
+									}
+								}
+							}	
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 float CAccuracyFix::GetUserAiming(edict_t* pEdict, int* cpId, int* cpBody, float distance)
 {
-        float result = 0.0f;
-        *cpId = 0;
-        *cpBody = 0;
+	float Result = 0.0f;
 
-	if (FNullEnt(pEdict))
-        	return result;
+	if (!FNullEnt(pEdict))
+	{
+		auto Entityindex = ENTINDEX(pEdict);
 
-    	auto EntityIndex = ENTINDEX(pEdict);
-    	if (EntityIndex <= 0 || EntityIndex > gpGlobals->maxClients)
-        	return result;
+		if (Entityindex > 0 && Entityindex <= gpGlobals->maxClients)
+		{
+			Vector v_forward;
 
-    	Vector v_forward;
-    	Vector v_src = pEdict->v.origin + pEdict->v.view_ofs;
+			Vector v_src = pEdict->v.origin + pEdict->v.view_ofs;
 
-    	g_engfuncs.pfnAngleVectors(pEdict->v.v_angle, v_forward, NULL, NULL);
-    	Vector v_dest = v_src + v_forward * distance;
+			g_engfuncs.pfnAngleVectors(pEdict->v.v_angle, v_forward, NULL, NULL);
 
-    	TraceResult trEnd;
-    	g_engfuncs.pfnTraceLine(v_src, v_dest, 0, pEdict, &trEnd);
+			TraceResult trEnd;
 
-    	*cpId = FNullEnt(trEnd.pHit) ? 0 : ENTINDEX(trEnd.pHit);
-    	*cpBody = trEnd.iHitgroup;
+			Vector v_dest = v_src + v_forward * distance;
 
-    	if (trEnd.flFraction < 1.0f)
-    	{
-        	result = (trEnd.vecEndPos - v_src).Length();
-    	}
+			g_engfuncs.pfnTraceLine(v_src, v_dest, 0, pEdict, &trEnd);
 
-    	return result;
+			*cpId = FNullEnt(trEnd.pHit) ? 0 : ENTINDEX(trEnd.pHit);
+
+			*cpBody = trEnd.iHitgroup;
+
+			if (trEnd.flFraction < 1.0f)
+			{
+				Result = (trEnd.vecEndPos - v_src).Length();
+			}
+
+			return Result;
+		}
+	}
+
+	*cpId = 0;
+
+	*cpBody = 0;
+
+	return Result;
 }
-
