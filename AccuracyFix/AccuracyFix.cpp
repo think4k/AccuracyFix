@@ -38,7 +38,7 @@ void CAccuracyFix::ServerActivate()
 
 void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMonsters, edict_t* pentToSkip, TraceResult* ptr)
 {
-	if (fNoMonsters == dont_ignore_monsters && vStart && vEnd && pentToSkip && ptr)
+	if (fNoMonsters == dont_ignore_monsters)	
 	{
 		if (!FNullEnt(pentToSkip))
 		{
@@ -61,7 +61,7 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 
 						if (DistanceLimit > 0.0f && Player->pev->flags & FL_ONGROUND)
 						{
-							auto trResult = gAccuracyFix.GetUserAiming(pentToSkip, DistanceLimit);
+							auto trResult = this->GetUserAiming(pentToSkip, DistanceLimit);
 
 							if (!FNullEnt(trResult.pHit))
 							{
