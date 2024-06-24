@@ -59,7 +59,7 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 							DistanceLimit = this->m_af_distance_all->value;
 						}
 
-						if (DistanceLimit > 0.0f)
+						if (DistanceLimit > 0.0f && Player->pev->flags & FL_ONGROUND)
 						{
 							auto trResult = gAccuracyFix.GetUserAiming(pentToSkip, DistanceLimit);
 
@@ -73,7 +73,7 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 
 									if (this->m_af_accuracy_all->value > 0.0f)
 									{
-											fwdVelocity = this->m_af_accuracy_all->value;
+										fwdVelocity = this->m_af_accuracy_all->value;
 									}
 
 									g_engfuncs.pfnMakeVectors(pentToSkip->v.v_angle);
