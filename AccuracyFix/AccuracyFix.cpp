@@ -86,7 +86,6 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 
 							int TargetIndex = 0, HitBoxPlace = 0;
 
-							
 							if (this->GetUserAiming(pentToSkip, &TargetIndex, &HitBoxPlace, aimDistance) > 0.0f)
 							{
 								if (Player->pev->flags & FL_ONGROUND)
@@ -103,8 +102,14 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 										if (fwdVelocity > 0.0f)
 										{
 											g_engfuncs.pfnMakeVectors(pentToSkip->v.v_angle);
-                									Vector Result = (Vector)vStart + gpGlobals->v_forward * fwdVelocity;
-                									g_engfuncs.pfnTraceLine(vStart, Result, fNoMonsters, pentToSkip, ptr);
+
+											Vector Result = Vector(0.0f, 0.0f, 0.0f);
+
+											Result[0] = (vStart[0] + (gpGlobals->v_forward[0] * fwdVelocity));
+											Result[1] = (vStart[1] + (gpGlobals->v_forward[1] * fwdVelocity));
+											Result[2] = (vStart[2] + (gpGlobals->v_forward[2] * fwdVelocity));
+
+											g_engfuncs.pfnTraceLine(vStart, Result, fNoMonsters, pentToSkip, ptr);
 										}
 									}
 								}
@@ -125,7 +130,7 @@ float CAccuracyFix::GetUserAiming(edict_t* pEdict, int* cpId, int* cpBody, float
 	{
 		auto Entityindex = ENTINDEX(pEdict);
 
-		if (Entityindex > 0 && Entityindex <= gpGlobals->maxClients)
+		if (Entityindex > 0)
 		{
 			Vector v_forward;
 
