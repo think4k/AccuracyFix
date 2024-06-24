@@ -43,8 +43,8 @@ jobs:
         # Move settings file to folder
         mv ${{env.SOLUTION_FILE_PATH}}\cstrike\addons\accuracyfix\accuracyfix.cfg publish\addons\accuracyfix\accuracyfix.cfg
 
-    - name: Deploy artifacts
-      uses: actions/upload-artifact@main
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v4.3.3
       with:
         name: accuracyfix-windows
         path: publish/*
