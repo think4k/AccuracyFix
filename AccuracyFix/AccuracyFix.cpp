@@ -2,6 +2,29 @@
 
 CAccuracyFix gAccuracyFix;
 
+cvar_t* CAccuracyFix::CvarRegister(const char* Name, const char* Value)
+{
+	cvar_t* Pointer = g_engfuncs.pfnCVarGetPointer(Name);
+
+	if (!Pointer)
+	{
+		this->m_Cvar[Name].name = Name;
+
+		this->m_Cvar[Name].string = (char*)(Value);
+
+		g_engfuncs.pfnCVarRegister(&this->m_Cvar[Name]);
+
+		Pointer = g_engfuncs.pfnCVarGetPointer(this->m_Cvar[Name].name);
+
+		if (Pointer)
+		{
+			g_engfuncs.pfnCvar_DirectSet(Pointer, Value);
+		}
+	}
+
+	return Pointer;
+}
+
 void CAccuracyFix::ServerActivate()
 {
 	this->m_af_accuracy_all = this->CvarRegister("af_accuracy_all", "-1.0");
@@ -114,27 +137,4 @@ TraceResult CAccuracyFix::GetUserAiming(edict_t* pEntity, float DistanceLimit)
 	}
 
 	return Result;
-}
-
-cvar_t* CAccuracyFix::CvarRegister(const char* Name, const char* Value)
-{
-	cvar_t* Pointer = g_engfuncs.pfnCVarGetPointer(Name);
-
-	if (!Pointer)
-	{
-		this->m_Cvar[Name].name = Name;
-
-		this->m_Cvar[Name].string = (char*)(Value);
-
-		g_engfuncs.pfnCVarRegister(&this->m_Cvar[Name]);
-
-		Pointer = g_engfuncs.pfnCVarGetPointer(this->m_Cvar[Name].name);
-
-		if (Pointer)
-		{
-			g_engfuncs.pfnCvar_DirectSet(Pointer, Value);
-		}
-	}
-
-	return Pointer;
 }
