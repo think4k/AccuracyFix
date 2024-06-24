@@ -3,12 +3,10 @@
 class CAccuracyFix
 {
 	public:
+		cvar_t* CvarRegister(const char* Name, const char* Value);
 		void ServerActivate();
-
 		void TraceLine(const float* vStart, const float* vEnd, int fNoMonsters, edict_t* pentToSkip, TraceResult* ptr);
 		TraceResult GetUserAiming(edict_t* pEntity, float DistanceLimit);
-		cvar_t* CvarRegister(const char* Name, const char* Value);
-
 	private:
 		std::map<std::string, cvar_t> m_Cvar;
 
