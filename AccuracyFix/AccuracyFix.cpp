@@ -130,7 +130,7 @@ float CAccuracyFix::GetUserAiming(edict_t* pEdict, int* cpId, int* cpBody, float
 	{
 		auto Entityindex = ENTINDEX(pEdict);
 
-		if (Entityindex > 0)
+		if (Entityindex > 0 && Entityindex <= gpGlobals->maxClients)
 		{
 			Vector v_forward;
 
