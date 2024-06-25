@@ -30,10 +30,7 @@ jobs:
     - name: Run build
       working-directory: ./AccuracyFix
       run: make
-
-    - name: Strip debug symbols
-      run: strip --strip-debug ./AccuracyFix/Release/accuracyfix_mm.so
-
+    
     - name: Move release file to publish
       run: |
         # Make Accuracy Fix path
