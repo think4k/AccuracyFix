@@ -77,7 +77,6 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 					{
 						if ((Player->m_pActiveItem->iItemSlot() == PRIMARY_WEAPON_SLOT) || (Player->m_pActiveItem->iItemSlot() == PISTOL_SLOT))
 						{
-							g_engfuncs.pfnServerCommand("say m_pActiveItem PRIMARY_WEAPON_SLOT & PISTOL_SLOT\n");
 							auto aimDistance = this->m_af_distance[Player->m_pActiveItem->m_iId]->value;
 
 							if (this->m_af_distance_all->value > 0)
@@ -89,10 +88,8 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 
 							if (this->GetUserAiming(pentToSkip, &TargetIndex, &HitBoxPlace, aimDistance) > 0.0f)
 							{
-								g_engfuncs.pfnServerCommand("say GetUserAiming\n");
 								if (Player->pev->flags & FL_ONGROUND)
 								{
-									g_engfuncs.pfnServerCommand("say FL_ONGROUND\n");
 									if (TargetIndex > 0 && TargetIndex <= gpGlobals->maxClients)
 									{
 										auto fwdVelocity = this->m_af_accuracy[Player->m_pActiveItem->m_iId]->value;
