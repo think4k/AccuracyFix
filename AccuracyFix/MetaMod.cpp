@@ -4,7 +4,7 @@ plugin_info_t Plugin_info =
 {
 	META_INTERFACE_VERSION,
 	"AccuracyFix",
-	"2.0.0",
+	"2.1.1",
 	__DATE__,
 	"think4k",
 	"https://dzair-gaming.com",
