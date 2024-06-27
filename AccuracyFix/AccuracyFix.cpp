@@ -75,7 +75,7 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 				{
 					if (Player->m_pActiveItem)
 					{
-						if ((Player->m_pActiveItem->iItemSlot() == PRIMARY_WEAPON_SLOT) || (Player->m_pActiveItem->iItemSlot() == PISTOL_SLOT))
+						if (!((BIT(WEAPON_NONE) | BIT(WEAPON_HEGRENADE) | BIT(WEAPON_C4) | BIT(WEAPON_SMOKEGRENADE) | BIT(WEAPON_FLASHBANG) | BIT(WEAPON_KNIFE)) & BIT(Player->m_pActiveItem->m_iId)))
 						{
 							auto aimDistance = this->m_af_distance[Player->m_pActiveItem->m_iId]->value;
 
@@ -85,10 +85,11 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 							}
 
 							int TargetIndex = 0, HitBoxPlace = 0;
+							bool OnGround = (Player->pev->flags & FL_ONGROUND) != 0;
 
 							if (this->GetUserAiming(pentToSkip, &TargetIndex, &HitBoxPlace, aimDistance) > 0.0f)
 							{
-								if (Player->pev->flags & FL_ONGROUND)
+								if (OnGround)
 								{
 									if (TargetIndex > 0 && TargetIndex <= gpGlobals->maxClients)
 									{
