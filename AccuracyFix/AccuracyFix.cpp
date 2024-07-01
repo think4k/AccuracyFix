@@ -103,12 +103,12 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 
 									if (!OnGround)
         								{
-            									fwdVelocity *= 0.5f; // Reduce accuracy by 50% when not on ground
+            									fwdVelocity *= 0.1f; // Reduce accuracy by 50% when not on ground
         								}
 
         								if (isSniperRifle && !isPlayerScoped)
         								{
-            									fwdVelocity *= 0.5f; // Reduce accuracy by 50% when no-scoping with a sniper rifle
+            									fwdVelocity *= 0.1f; // Reduce accuracy by 50% when no-scoping with a sniper rifle
         								}
 									
 									if (fwdVelocity > 0.0f)
