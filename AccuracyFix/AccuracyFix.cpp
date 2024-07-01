@@ -86,44 +86,34 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 
 							int TargetIndex = 0, HitBoxPlace = 0;
 							bool OnGround = (Player->pev->flags & FL_ONGROUND) != 0;
-							bool isPlayerScoped = Player->pev->fov < 90;
-							bool isSniperRifle = BIT(Player->m_pActiveItem->m_iId) & (BIT(WEAPON_AWP) | BIT(WEAPON_SCOUT) | BIT(WEAPON_G3SG1) | BIT(WEAPON_SG550));
-							float aimingResult = this->GetUserAiming(pentToSkip, &TargetIndex, &HitBoxPlace, aimDistance);
 
-							if (aimingResult > 0.0f)
+							if (this->GetUserAiming(pentToSkip, &TargetIndex, &HitBoxPlace, aimDistance) > 0.0f)
 							{
-								if (TargetIndex > 0 && TargetIndex <= gpGlobals->maxClients)
+								if(OnGround)
 								{
-									auto fwdVelocity = this->m_af_accuracy[Player->m_pActiveItem->m_iId]->value;
-									
-									if (this->m_af_accuracy_all->value > 0.0f)
+									if (TargetIndex > 0 && TargetIndex <= gpGlobals->maxClients)
 									{
-										fwdVelocity = this->m_af_accuracy_all->value;
-									}
-
-									if (!OnGround)
-        								{
-            									fwdVelocity *= 0.1f; // Reduce accuracy by 50% when not on ground
-        								}
-
-        								if (isSniperRifle && !isPlayerScoped)
-        								{
-            									fwdVelocity *= 0.1f; // Reduce accuracy by 50% when no-scoping with a sniper rifle
-        								}
+										auto fwdVelocity = this->m_af_accuracy[Player->m_pActiveItem->m_iId]->value;
 									
-									if (fwdVelocity > 0.0f)
-									{
-										g_engfuncs.pfnMakeVectors(pentToSkip->v.v_angle);
+										if (this->m_af_accuracy_all->value > 0.0f)
+										{
+											fwdVelocity = this->m_af_accuracy_all->value;
+										}
 
-										Vector Result = Vector(0.0f, 0.0f, 0.0f);
+										if (fwdVelocity > 0.0f)
+										{
+											g_engfuncs.pfnMakeVectors(pentToSkip->v.v_angle);
 
-										Result[0] = (vStart[0] + (gpGlobals->v_forward[0] * fwdVelocity));
-										Result[1] = (vStart[1] + (gpGlobals->v_forward[1] * fwdVelocity));
-										Result[2] = (vStart[2] + (gpGlobals->v_forward[2] * fwdVelocity));
+											Vector Result = Vector(0.0f, 0.0f, 0.0f);
 
-										g_engfuncs.pfnTraceLine(vStart, Result, fNoMonsters, pentToSkip, ptr);
+											Result[0] = (vStart[0] + (gpGlobals->v_forward[0] * fwdVelocity));
+											Result[1] = (vStart[1] + (gpGlobals->v_forward[1] * fwdVelocity));
+											Result[2] = (vStart[2] + (gpGlobals->v_forward[2] * fwdVelocity));
+
+											g_engfuncs.pfnTraceLine(vStart, Result, fNoMonsters, pentToSkip, ptr);
+										}
 									}
-								}
+								}	
 							}	
 						}
 					}
