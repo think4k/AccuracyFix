@@ -129,7 +129,7 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 	}
 }
 
-void AdjustSprayPattern(edict_t* Player, float& aimX, float& aimY)
+void CAccuracyFix::AdjustSprayPattern(edict_t* Player, float& aimX, float& aimY)
 {
     static std::map<int, std::pair<float, float>> sprayPatterns;
     int playerId = ENTINDEX(Player);
