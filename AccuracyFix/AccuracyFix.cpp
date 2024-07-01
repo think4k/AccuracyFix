@@ -86,38 +86,42 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 
 							int TargetIndex = 0, HitBoxPlace = 0;
 							bool OnGround = (Player->pev->flags & FL_ONGROUND) != 0;
+							bool isPlayerScoped = Player->pev->fov < 90;
+							bool isSniperRifle = BIT(Player->m_pActiveItem->m_iId) & (BIT(WEAPON_AWP) | BIT(WEAPON_SCOUT) | BIT(WEAPON_G3SG1) | BIT(WEAPON_SG550));
 							float aimingResult = this->GetUserAiming(pentToSkip, &TargetIndex, &HitBoxPlace, aimDistance);
 
 							if (aimingResult > 0.0f)
 							{
-								if (OnGround)
+								if (TargetIndex > 0 && TargetIndex <= gpGlobals->maxClients)
 								{
-									if (TargetIndex > 0 && TargetIndex <= gpGlobals->maxClients)
+									auto fwdVelocity = this->m_af_accuracy[Player->m_pActiveItem->m_iId]->value;
+									
+									if (this->m_af_accuracy_all->value > 0.0f)
 									{
-										auto fwdVelocity = this->m_af_accuracy[Player->m_pActiveItem->m_iId]->value;
+										fwdVelocity = this->m_af_accuracy_all->value;
+									}
+
+									if (!OnGround)
+        								{
+            									fwdVelocity *= 0.5f; // Reduce accuracy by 50% when not on ground
+        								}
+
+        								if (isSniperRifle && !isPlayerScoped)
+        								{
+            									fwdVelocity *= 0.5f; // Reduce accuracy by 50% when no-scoping with a sniper rifle
+        								}
 									
-										if (this->m_af_accuracy_all->value > 0.0f)
-										{
-											fwdVelocity = this->m_af_accuracy_all->value;
-										}
-									
-										if (fwdVelocity > 0.0f)
-										{
-											float aimX = Player->v.v_angle.x;
-            									 	float aimY = Player->v.v_angle.y;
-            										AdjustSprayPattern(Player, aimX, aimY);
+									if (fwdVelocity > 0.0f)
+									{
+										g_engfuncs.pfnMakeVectors(pentToSkip->v.v_angle);
 
-            										// Use the adjusted aim angles
-            										Vector adjustedAngle(aimX, aimY, Player->v.v_angle.z);
-            										g_engfuncs.pfnMakeVectors(adjustedAngle);
+										Vector Result = Vector(0.0f, 0.0f, 0.0f);
 
-            										Vector Result = Vector(0.0f, 0.0f, 0.0f);
-            										Result[0] = (vStart[0] + (gpGlobals->v_forward[0] * fwdVelocity));
-            										Result[1] = (vStart[1] + (gpGlobals->v_forward[1] * fwdVelocity));
-            										Result[2] = (vStart[2] + (gpGlobals->v_forward[2] * fwdVelocity));
+										Result[0] = (vStart[0] + (gpGlobals->v_forward[0] * fwdVelocity));
+										Result[1] = (vStart[1] + (gpGlobals->v_forward[1] * fwdVelocity));
+										Result[2] = (vStart[2] + (gpGlobals->v_forward[2] * fwdVelocity));
 
-            										g_engfuncs.pfnTraceLine(vStart, Result, fNoMonsters, pentToSkip, ptr);
-										}
+										g_engfuncs.pfnTraceLine(vStart, Result, fNoMonsters, pentToSkip, ptr);
 									}
 								}
 							}	
@@ -127,19 +131,6 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 			}
 		}
 	}
-}
-
-void CAccuracyFix::AdjustSprayPattern(edict_t* Player, float& aimX, float& aimY)
-{
-    static std::map<int, std::pair<float, float>> sprayPatterns;
-    int playerId = ENTINDEX(Player);
-    auto& sprayPattern = sprayPatterns[playerId];
-
-    sprayPattern.first += (aimX - sprayPattern.first) * 0.1f;
-    sprayPattern.second += (aimY - sprayPattern.second) * 0.1f;
-
-    aimX = sprayPattern.first;
-    aimY = sprayPattern.second;
 }
 
 float CAccuracyFix::GetUserAiming(edict_t* pEdict, int* cpId, int* cpBody, float distance)
