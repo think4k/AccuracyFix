@@ -86,8 +86,9 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 
 							int TargetIndex = 0, HitBoxPlace = 0;
 							bool OnGround = (Player->pev->flags & FL_ONGROUND) != 0;
+							float aimingResult = this->GetUserAiming(pentToSkip, &TargetIndex, &HitBoxPlace, aimDistance);
 
-							if (this->GetUserAiming(pentToSkip, &TargetIndex, &HitBoxPlace, aimDistance) > 0.0f)
+							if (aimingResult > 0.0f)
 							{
 								if (OnGround)
 								{
@@ -102,15 +103,20 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 									
 										if (fwdVelocity > 0.0f)
 										{
-											g_engfuncs.pfnMakeVectors(pentToSkip->v.v_angle);
+											float aimX = Player->v.v_angle.x;
+            									 	float aimY = Player->v.v_angle.y;
+            										AdjustSprayPattern(Player, aimX, aimY);
 
-											Vector Result = Vector(0.0f, 0.0f, 0.0f);
+            										// Use the adjusted aim angles
+            										Vector adjustedAngle(aimX, aimY, Player->v.v_angle.z);
+            										g_engfuncs.pfnMakeVectors(adjustedAngle);
 
-											Result[0] = (vStart[0] + (gpGlobals->v_forward[0] * fwdVelocity));
-											Result[1] = (vStart[1] + (gpGlobals->v_forward[1] * fwdVelocity));
-											Result[2] = (vStart[2] + (gpGlobals->v_forward[2] * fwdVelocity));
+            										Vector Result = Vector(0.0f, 0.0f, 0.0f);
+            										Result[0] = (vStart[0] + (gpGlobals->v_forward[0] * fwdVelocity));
+            										Result[1] = (vStart[1] + (gpGlobals->v_forward[1] * fwdVelocity));
+            										Result[2] = (vStart[2] + (gpGlobals->v_forward[2] * fwdVelocity));
 
-											g_engfuncs.pfnTraceLine(vStart, Result, fNoMonsters, pentToSkip, ptr);
+            										g_engfuncs.pfnTraceLine(vStart, Result, fNoMonsters, pentToSkip, ptr);
 										}
 									}
 								}
@@ -121,6 +127,19 @@ void CAccuracyFix::TraceLine(const float* vStart, const float* vEnd, int fNoMons
 			}
 		}
 	}
+}
+
+void AdjustSprayPattern(edict_t* Player, float& aimX, float& aimY)
+{
+    static std::map<int, std::pair<float, float>> sprayPatterns;
+    int playerId = ENTINDEX(Player);
+    auto& sprayPattern = sprayPatterns[playerId];
+
+    sprayPattern.first += (aimX - sprayPattern.first) * 0.1f;
+    sprayPattern.second += (aimY - sprayPattern.second) * 0.1f;
+
+    aimX = sprayPattern.first;
+    aimY = sprayPattern.second;
 }
 
 float CAccuracyFix::GetUserAiming(edict_t* pEdict, int* cpId, int* cpBody, float distance)
